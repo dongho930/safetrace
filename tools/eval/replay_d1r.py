@@ -3,7 +3,8 @@
     python tools/eval/replay_d1r.py --root data/d1r --labels data/d1r/labels.csv
 
 - 재생 모드는 HAR 에 없는 요청을 모두 abort 하므로 실제 위협 사이트에 다시 접속하지 않는다.
-- labels.csv: snapshot_id,label_a,label_b,final_label,excluded_reason (2인 교차 라벨링, 불일치·주차 페이지 제외)
+- labels.csv: snapshot_id,label_a,label_b,final_label,excluded_reason,note,agreement
+  (콘솔 라벨링 → tools/eval/export_d1r_labels.py 로 생성. agreement = AGREED(독립 일치) | CONSENSUS(합의))
 """
 
 from __future__ import annotations
@@ -45,10 +46,12 @@ async def main() -> None:
         a = engine.analyze(obs, EV)
         pred = "UNKNOWN" if a.state == ReviewState.UNKNOWN else a.threat_types[0].type.value
         items.append({"snapshot_id": sid, "source": meta["source"], "label": labels[sid]["final_label"],
-                      "pred": pred, "confidence": a.threat_types[0].confidence})
+                      "agreement": labels[sid].get("agreement", ""), "pred": pred,
+                      "confidence": a.threat_types[0].confidence})
         print(sid, labels[sid]["final_label"], pred, flush=True)
     report = {"engine": engine.model_version, "n": len(items),
               "by_source": Counter(i["source"] for i in items),
+              "by_agreement": Counter(i["agreement"] for i in items),
               "confusion": Counter(f"{i['label']}->{i['pred']}" for i in items), "items": items}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -10,6 +10,7 @@ import LiveView from "./components/LiveView";
 import RelationGraph from "./components/RelationGraph";
 import EventLog from "./components/EventLog";
 import DetailPanel from "./components/DetailPanel";
+import Labeling from "./components/Labeling";
 
 const EMPTY_STATS: Stats = { discovered: 0, waiting: 0, investigating: 0, review_required: 0, decided: 0,
   failed: 0, skipped: 0, cases: 0 };
@@ -26,6 +27,8 @@ export default function App() {
   const [sse, setSse] = useState<SseState>("closed");
   const [selected, setSelected] = useState<string | null>(null);
   const [detailTick, setDetailTick] = useState(0);
+  const [view, setView] = useState<"console" | "labeling">("console");
+  const [labelingOn, setLabelingOn] = useState(false);
   const stepRef = useRef<Record<string, string>>({});
   const selectedRef = useRef<string | null>(null);
   useEffect(() => { selectedRef.current = selected; }, [selected]);
@@ -96,6 +99,12 @@ export default function App() {
     return subscribe(onEvent, setSse);
   }, [me, refresh, onEvent]);
 
+  // 라벨링은 서버에서 켜져 있고(SAFETRACE_LABELING_ENABLED) 라벨러 권한일 때만 탭을 보인다.
+  useEffect(() => {
+    if (!me || (me.role !== "investigator" && me.role !== "reviewer")) { setLabelingOn(false); return; }
+    getJson("/api/labeling/summary").then(() => setLabelingOn(true)).catch(() => setLabelingOn(false));
+  }, [me]);
+
   const list = useMemo(() => [...rows.values()].sort((a, b) => b.created_at.localeCompare(a.created_at)), [rows]);
 
   if (!me) return <Login onLogin={login} error={authError} />;
@@ -110,6 +119,12 @@ export default function App() {
             <span className="brand-sub">위협 의심 사이트 조사·검토 콘솔</span>
           </div>
         </div>
+        {labelingOn && (
+          <nav className="viewtabs" aria-label="화면 전환">
+            <button className={view === "console" ? "on" : ""} onClick={() => setView("console")}>조사 콘솔</button>
+            <button className={view === "labeling" ? "on" : ""} onClick={() => setView("labeling")}>D1-R 라벨링</button>
+          </nav>
+        )}
         <div className="topbar-right">
           <span className={`live live-${sse}`}>{sse === "open" ? "실시간 연결" : sse === "connecting" ? "연결 중" : "연결 끊김"}</span>
           <span className="who">{me.user_id} · {me.role}</span>
@@ -117,6 +132,7 @@ export default function App() {
         </div>
       </header>
 
+      {view === "labeling" && labelingOn ? <Labeling me={me.user_id} /> : <>
       <PipelineStrip rows={list} stats={stats} />
 
       {me.role !== "viewer" && <SubmitBar onSubmitted={refresh} />}
@@ -140,6 +156,7 @@ export default function App() {
         <DetailPanel key={selected} candidateId={selected} role={me.role} tick={detailTick}
           onClose={() => setSelected(null)} onChanged={refresh} />
       )}
+      </>}
 
       <footer className="foot">
         AI confidence 는 모델의 기술적 신뢰도이며 법적 위법성의 확률이 아닙니다. 외부 평판 DB 미등재는 정상의 근거가 아닙니다.

@@ -71,3 +71,32 @@ export interface Detail {
 }
 
 export interface Me { user_id: string; role: "viewer" | "investigator" | "reviewer" | "automation" }
+
+// D1-R 라벨링(backend/src/safetrace/labeling/store.py)
+export type LabelValue = "PHISHING" | "SCAM" | "ILLEGAL_GAMBLING_SUSPECTED" | "MALWARE" | "OTHER" | "BENIGN" | "EXCLUDE";
+export type ExcludeReason = "PARKED" | "DOWN_OR_ERROR" | "UNSURE";
+
+export interface LabelQueueRow {
+  snapshot_id: string; my_label: LabelValue | null; my_exclude_reason: ExcludeReason | null; locked: boolean;
+}
+
+export interface LabelItem {
+  snapshot_id: string; collected_day: string; url: string; final_url: string; title: string; lang: string;
+  text_excerpt: string; redirects: number; downloads_blocked: number; has_screenshot: boolean;
+  forms: { has_password: boolean; has_card_like: boolean; has_phone: boolean; has_id_number_like: boolean;
+           external_action: boolean }[];
+}
+
+export interface LabelVote { user: string; label: LabelValue; exclude_reason: ExcludeReason | null; note: string }
+
+export interface Disagreement {
+  snapshot_id: string; outcome: "DISAGREED" | "CONSENSUS"; labels: LabelVote[];
+  consensus: (LabelVote & { user: string }) | null;
+}
+
+export interface LabelSummary {
+  sample_rate: number; total_snapshots: number; sample_size: number; collector_errors: number; labelers: string[]; is_labeler: boolean;
+  done_by: Record<string, number>; outcomes: Record<"PENDING" | "AGREED" | "DISAGREED" | "CONSENSUS", number>;
+  both_labeled: number; percent_agreement: number | null; kappa: number | null;
+  final_by_label: Record<string, number>; excluded_by_reason: Record<string, number>;
+}

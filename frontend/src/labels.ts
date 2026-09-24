@@ -1,4 +1,4 @@
-import type { CandidateStatus } from "./types";
+import type { CandidateStatus, ExcludeReason, LabelValue } from "./types";
 
 export const STATUS_LABEL: Record<CandidateStatus, string> = {
   DISCOVERED: "발견", QUEUED: "조사 대기", SCREENING: "접근 전 검사", INVESTIGATING: "격리 조사 중",
@@ -40,3 +40,25 @@ export const STAGES: { key: string; title: string; sub: string; waiting: Candida
   { key: "review", title: "담당자 검토", sub: "최종 확정·감사로그", waiting: ["REVIEW_REQUIRED"], running: [],
     done: ["DECIDED"], failed: [] },
 ];
+
+/** D1-R 라벨링 선택지. key 는 단축키(docs/10_labeling_guide.md 와 같은 순서). */
+export const LABEL_OPTIONS: { value: LabelValue; key: string; text: string; hint: string }[] = [
+  { value: "PHISHING", key: "1", text: "피싱", hint: "기관·기업을 사칭해 로그인·결제·개인정보 입력 유도" },
+  { value: "SCAM", key: "2", text: "사기", hint: "투자·환급·쇼핑·입금 유도 등 금전 편취(사칭 로그인 없음)" },
+  { value: "ILLEGAL_GAMBLING_SUSPECTED", key: "3", text: "불법도박", hint: "카지노·토토·슬롯 배팅·충전·환전" },
+  { value: "MALWARE", key: "4", text: "악성코드", hint: "앱·파일 설치·다운로드 유도, 가짜 업데이트" },
+  { value: "OTHER", key: "5", text: "기타 위협", hint: "위협이지만 위 유형에 해당하지 않음" },
+  { value: "BENIGN", key: "6", text: "정상", hint: "정상 서비스 화면(위협 징후 없음)" },
+];
+
+export const EXCLUDE_OPTIONS: { value: ExcludeReason; key: string; text: string }[] = [
+  { value: "PARKED", key: "1", text: "주차 도메인" },
+  { value: "DOWN_OR_ERROR", key: "2", text: "삭제·오류·빈 페이지" },
+  { value: "UNSURE", key: "3", text: "판단 불가" },
+];
+
+export function labelText(value: string | null, reason?: string | null): string {
+  if (!value) return "미라벨";
+  if (value === "EXCLUDE") return `제외(${EXCLUDE_OPTIONS.find((o) => o.value === reason)?.text ?? reason ?? "?"})`;
+  return LABEL_OPTIONS.find((o) => o.value === value)?.text ?? value;
+}

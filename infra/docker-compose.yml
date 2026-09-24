@@ -43,7 +43,8 @@ services:
       SAFETRACE_API_HOST: 0.0.0.0
       SAFETRACE_SIGNER_URL: http://signer:8081
       SAFETRACE_DATA_DIR: /data
-    volumes: ["evidence:/data"]
+      SAFETRACE_D1R_DIR: /d1r  # 라벨링(SAFETRACE_LABELING_ENABLED=1)용. 스냅샷은 읽기 전용, labels/ 만 쓰기
+    volumes: ["evidence:/data", "../data/d1r:/d1r:ro", "../data/d1r/labels:/d1r/labels"]
     tmpfs: ["/tmp:size=64m"]
     networks: [svc, out, front]
     depends_on: [signer]

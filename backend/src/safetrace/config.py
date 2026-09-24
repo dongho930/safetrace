@@ -40,6 +40,13 @@ class Settings(BaseSettings):
     max_redirects: int = Field(default=10, ge=1, le=30)
     max_html_bytes: int = Field(default=2_000_000, ge=10_000)
 
+    # D1-R 2인 교차 라벨링(docs/10). 평가용 기능이라 기본은 꺼 둔다.
+    labeling_enabled: bool = False
+    d1r_dir: Path = Path("./data/d1r")
+    labeling_sample_rate: float = Field(default=0.5, gt=0, le=1)
+    labeling_salt: str = "safetrace-d1r-v1"  # 바꾸면 표본이 바뀌므로 라벨링 시작 후 변경 금지
+    labeling_labelers: list[str] = []  # 비어 있으면 처음 라벨을 남긴 2명
+
     # 개발용 CORS 출처(프론트 Vite dev 서버)
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
