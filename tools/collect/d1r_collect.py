@@ -18,6 +18,7 @@ import json
 import os
 import sys
 from datetime import UTC, datetime
+from itertools import zip_longest
 from pathlib import Path
 
 import httpx
@@ -27,7 +28,8 @@ from safetrace.schemas import EvidenceType
 from safetrace.security.url_policy import PolicyViolation, UrlPolicy, normalize_url
 
 FEEDS = {
-    "openphish": "https://openphish.com/feed.txt",
+    # 2026-09 기준 openphish.com/feed.txt 는 GitHub 공개 피드로 302 이동
+    "openphish": "https://raw.githubusercontent.com/openphish/public_feed/refs/heads/main/feed.txt",
     "urlhaus": "https://urlhaus.abuse.ch/downloads/text_online/",
 }
 FILES = {EvidenceType.HAR: "trace.har.json", EvidenceType.SCREENSHOT: "screenshot.png",
@@ -52,6 +54,11 @@ async def fetch_feed(client: httpx.AsyncClient, name: str, url: str, cap: int) -
     return [(name, u) for u in lines[:cap]]
 
 
+def interleave(feeds: list[list[tuple[str, str]]]) -> list[tuple[str, str]]:
+    """피드별로 번갈아 뽑아 한 피드(예: URLhaus 의 IoT 페이로드 URL)가 하루 할당량을 독점하지 않게 한다."""
+    return [item for group in zip_longest(*feeds) for item in group if item is not None]
+
+
 async def run_once(out: Path, max_new: int, kisa_csv: Path | None, proxy: str) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     index_path = out / "index.jsonl"
@@ -59,12 +66,14 @@ async def run_once(out: Path, max_new: int, kisa_csv: Path | None, proxy: str) -
     if index_path.exists():
         seen = {json.loads(ln)["key"] for ln in index_path.read_text(encoding="utf-8").splitlines() if ln}
 
-    sources: list[tuple[str, str]] = []
-    async with httpx.AsyncClient(proxy=proxy, timeout=20, headers={"User-Agent": "SafeTrace-research/0.1"}) as c:
+    feeds: list[list[tuple[str, str]]] = []
+    async with httpx.AsyncClient(proxy=proxy, timeout=20, follow_redirects=True,
+                                 headers={"User-Agent": "SafeTrace-research/0.1"}) as c:
         for name, url in FEEDS.items():
-            sources += await fetch_feed(c, name, url, cap=max_new * 5)
+            feeds.append(await fetch_feed(c, name, url, cap=max_new * 5))
     if kisa_csv and kisa_csv.exists():
-        sources += [("kisa", r.normalized_url) for r in load_csv(kisa_csv.read_bytes()).records]
+        feeds.append([("kisa", r.normalized_url) for r in load_csv(kisa_csv.read_bytes()).records])
+    sources = interleave(feeds)
 
     agent = BrowserAgent(UrlPolicy(resolve_dns=False), AgentLimits(page_timeout_s=20, total_budget_s=60),
                          proxy=proxy, record_video=False, record_har=True)

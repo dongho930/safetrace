@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     egress_proxy: str = ""
 
     safe_browsing_api_key: SecretStr = SecretStr("")
+    # 네이버 검색 API(웹문서) Seed, F-03 1주차 연동. NAVER API HUB(ncloud) 의 API Key ID / API Key
+    naver_client_id: str = ""
+    naver_client_secret: SecretStr = SecretStr("")
 
     # 탐색·조사 예산(기획서 2.2 / docs/05)
     max_depth: int = Field(default=2, ge=0, le=5)

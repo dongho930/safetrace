@@ -9,7 +9,7 @@
 |---|---|---|---|---|
 | F-01 | KISA 피싱사이트 URL(CSV·오픈 API) 적재: 정규화·중복 제거·거부 사유 기록 | ⓪ | `test_kisa_*` | 구현 |
 | F-02 | 신고 URL 단건·CSV 접수 → Case·Seed Candidate 생성 | ⓪ | `test_api::test_full_flow_review_rbac` | 구현 |
-| F-03 | 네이버 검색 API(웹문서) Seed — 공개 주의보 키워드 한정, 일 25,000회 이내 | ⓪ | 1주차 | 설계 확정 |
+| F-03 | 네이버 검색 API(웹문서) Seed — 공개 주의보 키워드 한정, NAVER API HUB 한도(월 775,000회) 이내 | ⓪ | 1주차 | 설계 확정 |
 | F-04 | 접근 전 검사: URL 정규화 → DNS → 사설·예약 IP 차단 | ⓪① | `test_url_policy` | 구현 |
 | F-05 | 우선순위 큐·visited 집합·예산(깊이·후보 수·도메인·시간) | ⓪ | `test_discovery` | 구현(인메모리) |
 | F-06 | 관찰 링크·리다이렉트·폼 action·스크립트 재큐잉, 허용목록은 IMPERSONATES 로만 기록 | ⓪ | `test_discovery`, `test_pipeline_e2e` | 구현 |
