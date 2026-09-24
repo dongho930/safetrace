@@ -13,8 +13,10 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hmac
 import html
 import logging
+import re
 import tempfile
 import time
 from collections.abc import Awaitable, Callable
@@ -87,6 +89,10 @@ class _State:
     errors: list[str] = field(default_factory=list)
 
 
+class _EgressDenied(Exception):
+    pass
+
+
 class BrowserAgent:
     def __init__(
         self,
@@ -98,6 +104,7 @@ class BrowserAgent:
         headless: bool = True,
         chromium_sandbox: bool = False,
         har_replay: Path | None = None,
+        egress_deny_token: str = "",
     ) -> None:
         # har_replay: D1-R 스냅샷 재생 모드. 네트워크 대신 HAR 에서만 응답하고(없으면 abort) 외부에 접속하지 않는다.
         self.har_replay = har_replay
@@ -108,6 +115,21 @@ class BrowserAgent:
         self.record_har = record_har
         self.headless = headless
         self.chromium_sandbox = chromium_sandbox
+        # egress 프록시와 공유하는 비밀값. 거부 응답은 이 값이 맞을 때만 "접속 불가"로 인정한다
+        # (사이트가 X-SafeTrace-Deny 헤더를 흉내 내 분석을 회피하지 못하게).
+        self.egress_deny_token = egress_deny_token
+
+    def _egress_denied(self, headers: dict[str, str], obs: Observation, st: _State) -> bool:
+        """평문 HTTP 목적지의 접속 실패·차단 시 프록시가 돌려준 거부 응답인지(공유 비밀값으로 확인)."""
+        token = headers.get("x-safetrace-deny-token", "")
+        if not self.egress_deny_token or not token or not hmac.compare_digest(token, self.egress_deny_token):
+            return False
+        reason = re.sub(r"[^A-Z0-9_]", "", headers.get("x-safetrace-deny", "").upper())[:64] or "DENIED"
+        if reason == "UPSTREAM_CONNECT_FAILED":
+            st.errors.append("EGRESS_UPSTREAM_CONNECT_FAILED")
+        else:
+            obs.policy_blocks.append(reason)  # IP_NOT_PUBLIC 등 프록시의 연결 시점 정책 차단
+        return True
 
     async def investigate(
         self,
@@ -167,13 +189,17 @@ class BrowserAgent:
                     await step("navigate", {"url": start.url})
                     t0 = time.monotonic()
                     try:
-                        await page.goto(start.url, wait_until="domcontentloaded",
-                                        timeout=self.limits.page_timeout_s * 1000)
+                        resp = await page.goto(start.url, wait_until="domcontentloaded",
+                                               timeout=self.limits.page_timeout_s * 1000)
+                        if resp is not None and self._egress_denied(resp.headers, obs, st):
+                            raise _EgressDenied
                         try:
                             await page.wait_for_load_state("networkidle", timeout=8000)
                         except PlaywrightError:
                             pass
                         await asyncio.sleep(self.limits.settle_s)
+                    except _EgressDenied:
+                        obs.reachable = False
                     except PlaywrightError as exc:
                         msg = str(exc).split("\n", 1)[0]
                         code = _net_error_code(msg)

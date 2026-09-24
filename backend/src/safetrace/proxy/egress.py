@@ -5,6 +5,8 @@
   검사와 연결 사이에 DNS 응답이 바뀌어도(DNS Rebinding) 검증하지 않은 주소로는 연결되지 않는다.
 - 사설·예약·링크로컬(169.254.169.254 포함)·내부 서비스 대역·위험 포트를 차단한다.
 - 연결 수·유휴 시간·전송량 상한을 둔다.
+- 거부 응답에는 Worker 와 공유한 비밀값(X-SafeTrace-Deny-Token)을 붙인다. 평문 HTTP 목적지는 거부 응답이
+  브라우저에 페이지로 보이므로, 에이전트는 이 값으로 프록시 거부와 사이트 응답을 구분한다(사이트는 위조 불가).
 """
 
 from __future__ import annotations
@@ -33,8 +35,9 @@ class ProxyStats:
 
 
 class EgressProxy:
-    def __init__(self, policy: UrlPolicy | None = None, max_conns: int = 64) -> None:
+    def __init__(self, policy: UrlPolicy | None = None, max_conns: int = 64, deny_token: str = "") -> None:
         self.policy = policy or UrlPolicy()
+        self.deny_token = deny_token
         self.stats = ProxyStats()
         self._sem = asyncio.Semaphore(max_conns)
 
@@ -137,9 +140,10 @@ class EgressProxy:
         self.stats.denied += 1
         log.warning("deny %s %s", reason, url[:200])
         body = f"SafeTrace egress denied: {reason}\n".encode()
+        token = f"X-SafeTrace-Deny-Token: {self.deny_token}\r\n" if self.deny_token else ""
         writer.write(
             f"HTTP/1.1 {code} Denied\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n"
-            f"X-SafeTrace-Deny: {reason}\r\nConnection: close\r\n\r\n".encode() + body
+            f"X-SafeTrace-Deny: {reason}\r\n{token}Connection: close\r\n\r\n".encode() + body
         )
         with contextlib.suppress(Exception):
             await writer.drain()
@@ -156,7 +160,10 @@ def main() -> None:
     port = int(os.environ.get("SAFETRACE_PROXY_PORT", "3128"))
 
     async def run() -> None:
-        server = await serve(host, port)
+        token = os.environ.get("SAFETRACE_EGRESS_DENY_TOKEN", "")
+        if not token:
+            log.warning("SAFETRACE_EGRESS_DENY_TOKEN 미설정: 평문 HTTP 접속 실패가 페이지로 수집될 수 있음")
+        server = await serve(host, port, EgressProxy(deny_token=token))
         log.info("egress proxy listening on %s:%s", host, port)
         async with server:
             await server.serve_forever()

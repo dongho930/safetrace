@@ -98,7 +98,8 @@ def make_agent(settings: Settings, local: bool = False):
                          max_redirects=settings.max_redirects, max_html_bytes=settings.max_html_bytes,
                          total_budget_s=min(settings.case_time_budget_s, 120))
     return BrowserAgent(policy, limits, proxy=settings.egress_proxy,
-                        chromium_sandbox=os.environ.get("SAFETRACE_CHROMIUM_SANDBOX") == "1")
+                        chromium_sandbox=os.environ.get("SAFETRACE_CHROMIUM_SANDBOX") == "1",
+                        egress_deny_token=settings.egress_deny_token.get_secret_value())
 
 
 async def run_worker(source: JobSource, agent, worker_id: str, stop: asyncio.Event) -> None:

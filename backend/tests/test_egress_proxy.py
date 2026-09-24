@@ -89,3 +89,16 @@ async def test_allowed_http_passthrough_with_connection_close(site):
         resp = await _raw(port, f"GET http://{site}/benign HTTP/1.1\r\nHost: {site}\r\n"
                                 f"Proxy-Connection: keep-alive\r\n\r\n".encode())
     assert resp.startswith(b"HTTP/1.0 200") or resp.startswith(b"HTTP/1.1 200")
+
+
+async def test_deny_response_carries_shared_token_only_when_configured():
+    for token, expected in (("s3cret-token", b"X-SafeTrace-Deny-Token: s3cret-token\r\n"), ("", None)):
+        p = EgressProxy(deny_token=token)
+        server = await serve("127.0.0.1", 0, p)
+        port = server.sockets[0].getsockname()[1]
+        try:
+            data = await _raw(port, b"GET http://10.0.0.1/ HTTP/1.1\r\nHost: 10.0.0.1\r\n\r\n")
+        finally:
+            server.close()
+        assert b"X-SafeTrace-Deny: IP_NOT_PUBLIC" in data
+        assert (expected in data) if expected else (b"X-SafeTrace-Deny-Token" not in data)
