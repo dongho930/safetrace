@@ -23,7 +23,7 @@
 | 증거 해시 체인(직전 레코드 해시 연결·추가 전용 저장) | `evidence/ledger.py`, `infra/db/schema.sql` 트리거 | `test_evidence_chain` 13종 | ✅ |
 | 해시 체인에 분리된 서명 서비스의 HMAC 서명 | `signer/app.py`(키 단독 보유, seq 재서명 금지, high-water mark) | 체인 재작성·끝 레코드 삭제 탐지, 컨테이너에서 서명·검증 확인 | ✅ |
 | 기구현 브라우저 모듈에 URL·DNS·IP 재검증·리다이렉트 추적 통합 | `_route`/`_route_document`(hop 마다 재검사) | `test_redirect_to_private_ip_blocked`(사설·메타데이터·루프백), 루프 제한 | ✅ |
-| D1-R 실데이터 수집 가동(2주차까지 매일) | `tools/collect/d1r_collect.py`, compose `collector` 프로필, HAR 재생 평가기 | HAR 재생 오프라인 재현 시험 | ⏳ **구현 완료·미가동** — 실제 위협 피드 접속 시작은 팀 결정 필요(§4) |
+| D1-R 실데이터 수집 가동(2주차까지 매일) | `tools/collect/d1r_collect.py`, compose `collector` 프로필, HAR 재생 평가기 | HAR 재생 오프라인 재현 시험 | ✅ **가동 중(2026-09-25~)** — 아래 §5 |
 
 ## 3. 설계 확정 항목
 
@@ -56,11 +56,11 @@
 
 | 항목 | 필요한 조치 | 기한 |
 |---|---|---|
-| D1-R 수집 가동 | OpenPhish·URLhaus 이용 조건 확인 후 `docker compose ... --profile collector up -d collector` | 가능한 빨리(10/18 동결) |
+| D1-R 수집 가동 | **가동 시작(2026-09-25)**: 이용 조건 확인(OpenPhish 커뮤니티=비상업 연구 허용·재배포 금지, URLhaus=fair use 무료) → `collector` 컨테이너 매일 1회(60건/일, `restart: unless-stopped`). 첫 라운드 누적: 수집 67(OpenPhish 50·URLhaus 17), 접속 불가 50, 약 91MB. HAR 재생 평가 동작 확인(`replay_d1r.py`, 스모크 4건 전부 UNKNOWN — 영문 지갑 피싱, 한국어 규칙 한계). 수정: OpenPhish 피드가 GitHub로 302 이동 → URL 교체·리다이렉트 허용, 피드 번갈아 뽑기(URLhaus IoT URL 독점 방지). **남은 일**: PC·Docker Desktop이 켜져 있어야 매일 수집됨, 2인 교차 라벨링(`labels_template.csv`), 10/18 동결 | 10/18 동결 |
 | ~~Safe Browsing 실키~~ | ✅ 2026-09-24 `.env` 설정·실조회 확인 완료 | — |
 | 네이버 검색 API | 애플리케이션 등록·약관 확인(F-03) | 1주차 |
 | 로컬 제로샷 모델 | **검증 완료(2026-09-25), 결론: 기본값은 규칙 전용 유지(제로샷 미채택)**. `[ai]` 설치(torch 2.14·transformers 5.17, Py3.14 동작), 모델 리비전 `b5113eb` 고정, 로드 24s·분류 약 2.5s/건(CPU). D1-S(`reports/d1s_eval_zs.json`): 판정 변화 0건, Macro-F1 0.977 동일, BENIGN 평균 신뢰도 0.12→0.33. D3 정상 167곳(`reports/d3_eval_zs.json`): REVIEW_REQUIRED 26→36(15.6%→21.6%, 오탐 +10), 고신뢰(≥0.8) 경보 5→3. 상태 변화 18곳(UNKNOWN→REVIEW 14: 은행·카드·언론·SRT 등, 반대 4). 원인: 제로샷이 정상 페이지에도 PHISHING/MALWARE 0.3~0.5를 주어 ZS_BLEND 0.35로 섞으면 UNKNOWN_BELOW 0.45 근처로 몰림. → 이득은 없고 오탐만 늘어서 `--zeroshot`은 실험용 옵션으로만 둔다. 컨테이너 이미지 반영 불필요. 재검토 조건: 한국어 피싱 라벨 데이터로 미세조정했거나 ZS_BLEND≤0.15 재평가 | 10/5 ✅ |
-| CI 실행 | **완료(2026-09-25)**: PR #1(`prep/pre-contest-setup`)에서 backend(ruff·pytest 단위+브라우저·bandit·pip-audit)·frontend·semgrep·gitleaks 4개 잡 전부 통과. 첫 실행 실패 2건 수정: 액션을 커밋 SHA로 고정(semgrep 공급망 규칙), secrets 잡에 `pull-requests: read` 부여(gitleaks 403). 남은 일: PR을 main에 병합 | 10/5 ✅ |
+| CI 실행 | **완료(2026-09-25)**: PR #1(`prep/pre-contest-setup`)에서 backend(ruff·pytest 단위+브라우저·bandit·pip-audit)·frontend·semgrep·gitleaks 4개 잡 전부 통과. 첫 실행 실패 2건 수정: 액션을 커밋 SHA로 고정(semgrep 공급망 규칙), secrets 잡에 `pull-requests: read` 부여(gitleaks 403). PR #1 main 병합 완료 | 10/5 ✅ |
 | D3 오탐 개선 | 허용목록 Tranco·금융기관 병합, D1-R 라벨 후 가중치 보정 | 2주차 |
 | 인메모리 → PostgreSQL·Redis Streams | 02 문서 §5 교체 계획 | 1주차 |
 
