@@ -1,0 +1,42 @@
+# SafeTrace 프로젝트 전용 규칙: 설계 결정이 코드에서 깨지지 않도록 막는다.
+rules:
+  - id: safetrace-no-dangerously-set-inner-html
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: 수집 데이터는 불신 데이터다. dangerouslySetInnerHTML 금지(D2-12 저장형 XSS).
+    pattern: <$EL dangerouslySetInnerHTML={...} />
+
+  - id: safetrace-no-inline-style-attr
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: 콘솔 CSP(style-src 'self')를 깨는 인라인 style 속성 대신 CSS 클래스를 쓴다.
+    pattern: <$EL style={...} />
+
+  - id: safetrace-no-pickle
+    languages: [python]
+    severity: ERROR
+    message: 역직렬화 취약점 방지 — JSON 만 허용(기획서 2.8 코드오류).
+    pattern-either:
+      - pattern: pickle.$F(...)
+      - pattern: marshal.loads(...)
+      - pattern: yaml.load(...)
+
+  - id: safetrace-httpx-without-timeout
+    languages: [python]
+    severity: WARNING
+    message: 외부 호출은 타임아웃을 명시한다(API 오용).
+    patterns:
+      - pattern: httpx.AsyncClient(...)
+      - pattern-not: httpx.AsyncClient(..., timeout=$T, ...)
+
+  - id: safetrace-no-direct-goto-without-policy
+    languages: [python]
+    severity: WARNING
+    message: 브라우저 탐색은 BrowserAgent(정책 적용 경로)를 통해서만 한다.
+    patterns:
+      - pattern: $PAGE.goto(...)
+      - pattern-not-inside: |
+          class BrowserAgent:
+            ...
+    paths:
+      include: ["backend/src/**"]

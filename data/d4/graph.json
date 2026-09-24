@@ -1,0 +1,485 @@
+{
+ "version": "d4-1.0",
+ "seeds": [
+  "http://kbstar-verify01.test/",
+  "http://wooribank-verify02.test/",
+  "http://hometax-verify03.test/",
+  "http://epost-verify04.test/",
+  "http://cjlogistics-verify05.test/",
+  "http://tworld-verify06.test/",
+  "http://kakaobank-verify07.test/",
+  "http://shinhancard-verify08.test/",
+  "http://nhis-verify09.test/",
+  "http://coupang-verify10.test/"
+ ],
+ "designed": [
+  {
+   "url": "http://kbstar-pay01.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "kbstar-verify01.test"
+  },
+  {
+   "url": "http://kbstar-login01.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "kbstar-verify01.test"
+  },
+  {
+   "url": "http://kbstar-cdn-kit01.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "kbstar-verify01.test"
+  },
+  {
+   "url": "http://kbstar-otp01.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "kbstar-verify01.test"
+  },
+  {
+   "url": "http://kbstar-collect01.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "kbstar-pay01.test"
+  },
+  {
+   "url": "http://wooribank-pay02.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "wooribank-verify02.test"
+  },
+  {
+   "url": "http://wooribank-login02.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "wooribank-verify02.test"
+  },
+  {
+   "url": "http://wooribank-cdn-kit02.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "wooribank-verify02.test"
+  },
+  {
+   "url": "http://wooribank-otp02.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "wooribank-verify02.test"
+  },
+  {
+   "url": "http://wooribank-collect02.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "wooribank-pay02.test"
+  },
+  {
+   "url": "http://hometax-pay03.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "hometax-verify03.test"
+  },
+  {
+   "url": "http://hometax-login03.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "hometax-verify03.test"
+  },
+  {
+   "url": "http://hometax-cdn-kit03.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "hometax-verify03.test"
+  },
+  {
+   "url": "http://hometax-otp03.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "hometax-verify03.test"
+  },
+  {
+   "url": "http://hometax-collect03.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "hometax-pay03.test"
+  },
+  {
+   "url": "http://epost-pay04.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "epost-verify04.test"
+  },
+  {
+   "url": "http://epost-login04.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "epost-verify04.test"
+  },
+  {
+   "url": "http://epost-cdn-kit04.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "epost-verify04.test"
+  },
+  {
+   "url": "http://epost-otp04.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "epost-verify04.test"
+  },
+  {
+   "url": "http://epost-collect04.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "epost-pay04.test"
+  },
+  {
+   "url": "http://cjlogistics-pay05.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "cjlogistics-verify05.test"
+  },
+  {
+   "url": "http://cjlogistics-login05.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "cjlogistics-verify05.test"
+  },
+  {
+   "url": "http://cjlogistics-cdn-kit05.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "cjlogistics-verify05.test"
+  },
+  {
+   "url": "http://cjlogistics-otp05.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "cjlogistics-verify05.test"
+  },
+  {
+   "url": "http://cjlogistics-collect05.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "cjlogistics-pay05.test"
+  },
+  {
+   "url": "http://tworld-pay06.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "tworld-verify06.test"
+  },
+  {
+   "url": "http://tworld-login06.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "tworld-verify06.test"
+  },
+  {
+   "url": "http://tworld-cdn-kit06.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "tworld-verify06.test"
+  },
+  {
+   "url": "http://tworld-otp06.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "tworld-verify06.test"
+  },
+  {
+   "url": "http://tworld-collect06.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "tworld-pay06.test"
+  },
+  {
+   "url": "http://kakaobank-pay07.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "kakaobank-verify07.test"
+  },
+  {
+   "url": "http://kakaobank-login07.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "kakaobank-verify07.test"
+  },
+  {
+   "url": "http://kakaobank-cdn-kit07.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "kakaobank-verify07.test"
+  },
+  {
+   "url": "http://kakaobank-otp07.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "kakaobank-verify07.test"
+  },
+  {
+   "url": "http://kakaobank-collect07.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "kakaobank-pay07.test"
+  },
+  {
+   "url": "http://shinhancard-pay08.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "shinhancard-verify08.test"
+  },
+  {
+   "url": "http://shinhancard-login08.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "shinhancard-verify08.test"
+  },
+  {
+   "url": "http://shinhancard-cdn-kit08.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "shinhancard-verify08.test"
+  },
+  {
+   "url": "http://shinhancard-otp08.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "shinhancard-verify08.test"
+  },
+  {
+   "url": "http://shinhancard-collect08.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "shinhancard-pay08.test"
+  },
+  {
+   "url": "http://nhis-pay09.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "nhis-verify09.test"
+  },
+  {
+   "url": "http://nhis-login09.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "nhis-verify09.test"
+  },
+  {
+   "url": "http://nhis-cdn-kit09.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "nhis-verify09.test"
+  },
+  {
+   "url": "http://nhis-otp09.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "nhis-verify09.test"
+  },
+  {
+   "url": "http://nhis-collect09.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "nhis-pay09.test"
+  },
+  {
+   "url": "http://coupang-pay10.test/",
+   "depth": 1,
+   "relation": "LINK",
+   "from": "coupang-verify10.test"
+  },
+  {
+   "url": "http://coupang-login10.test/",
+   "depth": 1,
+   "relation": "REDIRECT",
+   "from": "coupang-verify10.test"
+  },
+  {
+   "url": "http://coupang-cdn-kit10.test/",
+   "depth": 1,
+   "relation": "FORM_ACTION",
+   "from": "coupang-verify10.test"
+  },
+  {
+   "url": "http://coupang-otp10.test/",
+   "depth": 1,
+   "relation": "SCRIPT",
+   "from": "coupang-verify10.test"
+  },
+  {
+   "url": "http://coupang-collect10.test/",
+   "depth": 2,
+   "relation": "FORM_ACTION",
+   "from": "coupang-pay10.test"
+  }
+ ],
+ "decoys": [
+  {
+   "url": "https://www.kbstar.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://kbstar-verify01.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.wooribank.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://wooribank-verify02.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.hometax.go.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://hometax-verify03.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.epost.go.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://epost-verify04.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.cjlogistics.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://cjlogistics-verify05.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.tworld.co.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://tworld-verify06.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.kakaobank.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://kakaobank-verify07.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.shinhancard.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://shinhancard-verify08.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.nhis.or.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://nhis-verify09.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  },
+  {
+   "url": "https://www.coupang.com/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://www.gov.kr/",
+   "expect": "IMPERSONATES_NOT_REQUEUED"
+  },
+  {
+   "url": "https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js",
+   "expect": "NOT_REQUEUED"
+  },
+  {
+   "url": "http://coupang-verify10.test/",
+   "expect": "DUPLICATE_NOT_REINVESTIGATED"
+  }
+ ],
+ "pass_criteria": {
+  "designed_found_min": 40,
+  "allowlisted_requeued": 0,
+  "budget_exceeded": 0,
+  "duplicate_investigations": 0
+ }
+}

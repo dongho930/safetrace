@@ -1,0 +1,31 @@
+# 비밀값 — 절대 커밋 금지
+.env
+.env.*
+!.env.example
+secrets/
+
+# 런타임·산출물
+var/
+reports/
+data/d1r/*
+!data/d1r/labels_template.csv
+data/d1s/site/
+data/d4/site/
+
+# Python
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# OS/편집기
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+~$*

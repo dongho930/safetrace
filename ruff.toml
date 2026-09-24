@@ -1,0 +1,10 @@
+# 저장소 전체 린트. 서비스 코드 규칙은 backend/pyproject.toml 과 같고,
+# 오프라인 CLI(평가·수집·생성 스크립트)는 동기 파일 I/O·subprocess 사용을 허용한다.
+extend = "backend/pyproject.toml"
+
+[lint.per-file-ignores]
+"tools/**" = ["ASYNC220", "ASYNC230", "ASYNC240", "ASYNC251", "S603", "S310"]
+"scripts/**" = ["S603"]
+"data/**" = ["S311"]
+"infra/scripts/**" = ["S310"]
+"backend/tests/**" = ["S105", "S106", "S311"]
