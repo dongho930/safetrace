@@ -82,7 +82,8 @@ async def main() -> None:
     rows = list(csv.DictReader(open(D1S / "labels.csv", encoding="utf-8")))
     if args.limit:
         rows = rows[: args.limit]
-    server = subprocess.Popen([sys.executable, str(D1S / "serve.py"), "--port", str(args.port)])
+    # args.port 는 argparse type=int 로 검증된 정수이고 리스트 인자(셸 미사용)라 주입 불가
+    server = subprocess.Popen([sys.executable, str(D1S / "serve.py"), "--port", str(args.port)])  # nosemgrep
     site = f"localhost:{args.port}"  # IP 리터럴 호스트 특징(url_ip_host)이 평가를 오염시키지 않도록
     try:
         time.sleep(1.0)
