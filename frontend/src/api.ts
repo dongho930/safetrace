@@ -58,3 +58,18 @@ export async function downloadJson(path: string, filename: string): Promise<void
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/** 인증이 필요한 이미지 등을 blob URL 로 받는다. 사용 후 URL.revokeObjectURL 로 해제한다. */
+export async function blobUrl(path: string): Promise<string> {
+  const r = await request(path);
+  return URL.createObjectURL(await r.blob());
+}
+
+export async function downloadText(path: string, filename: string, type: string): Promise<void> {
+  const r = await request(path);
+  const url = URL.createObjectURL(new Blob([await r.text()], { type }));
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.rel = "noopener";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

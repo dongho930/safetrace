@@ -6,7 +6,7 @@
 
 | 세트 | 구성(확정) | 위치 | 상태(2026-09-24) |
 |---|---|---|---|
-| D1-R 실제 위협 스냅샷 | OpenPhish 커뮤니티·URLhaus·KISA URL 중 수집 시점 접속 가능 URL 을 격리 환경에서 **1회** 수집(HAR·스크린샷·DOM·관찰 JSON + SHA-256)·동결, 2인 교차 라벨링, 주차·불확실 제외. 건수는 사전에 정하지 않고 실측 보고 | `tools/collect/d1r_collect.py` → `data/d1r/`(커밋 제외), 평가 `tools/eval/replay_d1r.py`(HAR 재생) | 수집기·재생기 구현, compose `collector` 프로필로 매일 수집 → **10/18 동결** |
+| D1-R 실제 위협 스냅샷 | OpenPhish 커뮤니티·URLhaus·KISA URL 중 수집 시점 접속 가능 URL 을 격리 환경에서 **1회** 수집(HAR·스크린샷·DOM·관찰 JSON + SHA-256)·동결, 표본 50% 2인 교차 라벨링(블라인드, 불일치는 합의 라벨, κ 보고 — [10](10_labeling_guide.md)), 주차·삭제·판단 불가 제외. 건수는 사전에 정하지 않고 실측 보고 | `tools/collect/d1r_collect.py` → `data/d1r/`(커밋 제외), 평가 `tools/eval/replay_d1r.py`(HAR 재생) | 수집기·재생기 구현, compose `collector` 프로필로 매일 수집 → **10/18 동결** |
 | D1-S 합성 시험 페이지 | 피싱·사기·도박 의심 각 20 + 정상 대조 30 = 90. 변형: plain·delayed(1.5초 뒤 삽입)·redirect(HTTP 2~3단계)·jsredirect(meta/JS) | `data/d1s/generate.py`(결정적, d1s-1.0), `labels.csv` | **생성·측정 완료** |
 | D2 공격 시나리오 | 15종(04 문서 §3) | `backend/tests/*`, `infra/scripts/verify_isolation.py` | 자동 시험 구현 |
 | D3 공개 정상 사이트 | 공공 67·금융 46·쇼핑 30·택배 12·포털/언론/기타 29 = **184**, 첫 화면 1회 렌더링, 요청 간격 ≥4~5초 | `data/d3/benign_sites.csv`, `tools/eval/run_d3.py` | **목록 확정·1차 측정 완료** |

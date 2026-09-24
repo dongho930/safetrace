@@ -45,6 +45,7 @@ def load_env() -> dict[str, str]:
         "SAFETRACE_ENV": "dev",
         "SAFETRACE_INPROC_WORKER": "1",
         "SAFETRACE_DATA_DIR": str(ROOT / "var"),
+        "SAFETRACE_D1R_DIR": str(ROOT / "data" / "d1r"),
         "SAFETRACE_SIGNER_STATE": str(ROOT / "var" / "signer" / "state.json"),
         "SAFETRACE_SIGNER_URL": f"http://127.0.0.1:{PORTS['signer']}",
         "SAFETRACE_SIGNER_PORT": str(PORTS["signer"]),

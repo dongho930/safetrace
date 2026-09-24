@@ -156,6 +156,14 @@ def create_app(settings: Settings | None = None, orchestrator: Orchestrator | No
     async def orch_error(_: Request, exc: OrchestratorError) -> JSONResponse:
         return JSONResponse({"error": exc.code}, status_code=exc.http_status)
 
+    if settings.labeling_enabled:
+        from safetrace.api.labeling import build_router, labeling_error_response
+        from safetrace.labeling.store import LabelingError, LabelStore
+
+        app.add_exception_handler(LabelingError, lambda _, exc: labeling_error_response(exc))
+        app.include_router(build_router(LabelStore(settings.d1r_dir, settings.labeling_sample_rate,
+                                                   settings.labeling_salt, settings.labeling_labelers)))
+
     @app.exception_handler(Exception)
     async def unhandled(_: Request, exc: Exception) -> JSONResponse:
         log.exception("unhandled error")  # 상세는 서버 로그에만
