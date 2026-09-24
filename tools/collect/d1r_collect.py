@@ -40,6 +40,8 @@ def guard() -> str:
     proxy = os.environ.get("SAFETRACE_EGRESS_PROXY", "")
     if not proxy or os.environ.get("SAFETRACE_D1R_ISOLATED") != "1":
         sys.exit("거부: D1-R 수집은 격리 Worker 망(egress 프록시 경유)에서만 실행한다. docs/08 §D1-R 참조")
+    if not os.environ.get("SAFETRACE_EGRESS_DENY_TOKEN"):
+        sys.exit("거부: SAFETRACE_EGRESS_DENY_TOKEN 이 없으면 프록시 거부 응답이 스냅샷으로 저장된다")
     return proxy
 
 
@@ -76,7 +78,8 @@ async def run_once(out: Path, max_new: int, kisa_csv: Path | None, proxy: str) -
     sources = interleave(feeds)
 
     agent = BrowserAgent(UrlPolicy(resolve_dns=False), AgentLimits(page_timeout_s=20, total_budget_s=60),
-                         proxy=proxy, record_video=False, record_har=True)
+                         proxy=proxy, record_video=False, record_har=True,
+                         egress_deny_token=os.environ.get("SAFETRACE_EGRESS_DENY_TOKEN", ""))
     day = datetime.now(UTC).strftime("%Y%m%d")
     stats = {"date": day, "collected": 0, "unreachable": 0, "skipped_seen": 0, "invalid": 0}
     with open(index_path, "a", encoding="utf-8") as index:

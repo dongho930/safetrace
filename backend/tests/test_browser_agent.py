@@ -94,3 +94,27 @@ async def test_direct_private_target_never_navigated():
         "c", "http://169.254.169.254/latest/meta-data/")
     assert "IP_NOT_PUBLIC" in res.observation.policy_blocks
     assert EvidenceType.SCREENSHOT not in res.artifacts or res.observation.dom_summary.text_excerpt == ""
+
+
+@pytest.mark.parametrize("path,error,block", [
+    ("/proxy-deny", "EGRESS_UPSTREAM_CONNECT_FAILED", None),
+    ("/proxy-policy-deny", None, "IP_NOT_PUBLIC"),
+])
+async def test_egress_proxy_denial_is_unreachable(site, path, error, block):
+    """평문 HTTP 목적지의 프록시 거부 응답은 페이지로 수집하지 않는다(D1-R 수집 결함 재발 방지)."""
+    from .conftest import DENY_TOKEN
+
+    res = await _agent(site, record_video=False, egress_deny_token=DENY_TOKEN).investigate("c", f"http://{site}{path}")
+    obs = res.observation
+    assert obs.reachable is False and obs.dom_summary.text_excerpt == ""
+    assert (error in obs.errors) if error else (block in obs.policy_blocks)
+
+
+async def test_forged_deny_header_does_not_evade_analysis(site):
+    """사이트가 거부 헤더를 흉내 내도 공유 비밀값이 다르면 정상적으로 수집·분석한다."""
+    from .conftest import DENY_TOKEN
+
+    obs = (await _agent(site, record_video=False, egress_deny_token=DENY_TOKEN)
+           .investigate("c", f"http://{site}/forged-deny")).observation
+    assert obs.reachable is True and "환급금" in obs.dom_summary.text_excerpt
+    assert not any(e.startswith("EGRESS_") for e in obs.errors)

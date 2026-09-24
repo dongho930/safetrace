@@ -24,6 +24,8 @@ class Settings(BaseSettings):
 
     # Worker 가 사용할 egress 프록시(2차 SSRF 방어). 비어 있으면 직접 접속(로컬 개발 전용).
     egress_proxy: str = ""
+    # 프록시 거부 응답 확인용 공유 비밀값(egress-proxy·worker·collector 동일). scripts/gen_secrets.py 가 생성
+    egress_deny_token: SecretStr = SecretStr("")
 
     safe_browsing_api_key: SecretStr = SecretStr("")
     # 네이버 검색 API(웹문서) Seed, F-03 1주차 연동. NAVER API HUB(ncloud) 의 API Key ID / API Key

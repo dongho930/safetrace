@@ -82,6 +82,7 @@ services:
     environment:
       SAFETRACE_PROXY_HOST: 0.0.0.0
       SAFETRACE_PROXY_PORT: "3128"
+      SAFETRACE_EGRESS_DENY_TOKEN: ${SAFETRACE_EGRESS_DENY_TOKEN:?run scripts/gen_secrets.py --add-missing}
     networks: [inv, out]
     mem_limit: 256m
     pids_limit: 128
@@ -96,6 +97,7 @@ services:
       SAFETRACE_WORKER_ID: worker-1
       SAFETRACE_INGEST_URL: http://ingest-gw:8080
       SAFETRACE_EGRESS_PROXY: http://egress-proxy:3128
+      SAFETRACE_EGRESS_DENY_TOKEN: ${SAFETRACE_EGRESS_DENY_TOKEN:?run scripts/gen_secrets.py --add-missing}
     tmpfs: ["/tmp:size=512m", "/home/pwuser:size=64m"]
     shm_size: 512m
     networks: [inv]  # 내부 서비스 망(svc)·외부 망(out)에 연결하지 않는다
@@ -113,6 +115,7 @@ services:
     environment:
       SAFETRACE_EGRESS_PROXY: http://egress-proxy:3128
       SAFETRACE_D1R_ISOLATED: "1"
+      SAFETRACE_EGRESS_DENY_TOKEN: ${SAFETRACE_EGRESS_DENY_TOKEN:?run scripts/gen_secrets.py --add-missing}
     volumes: ["../tools:/tools:ro", "../data/d1r:/data/d1r"]
     tmpfs: ["/tmp:size=512m", "/home/pwuser:size=64m"]
     shm_size: 512m
